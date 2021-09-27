@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import csv
 import gzip
 import io
 import json
@@ -14,8 +13,8 @@ from datetime import datetime
 import singer
 from jsonschema import Draft7Validator, FormatChecker
 
-from target_s3_csv import s3
-from target_s3_csv import utils
+from target_s3_json import s3
+from target_s3_json import utils
 
 logger = singer.get_logger('target_s3_csv')
 
@@ -33,11 +32,9 @@ def persist_messages(messages, config, s3_client):
     state = None
     schemas = {}
     key_properties = {}
-    headers = {}
     validators = {}
 
     delimiter = config.get('delimiter', ',')
-    quotechar = config.get('quotechar', '"')
 
     # Use the system specific temp directory if no custom temp_dir provided
     temp_dir = os.path.expanduser(config.get('temp_dir', tempfile.gettempdir()))
@@ -69,7 +66,7 @@ def persist_messages(messages, config, s3_client):
                     logger.error("Data validation failed and cannot load to destination. RECORD: {}\n"
                                  "'multipleOf' validations that allows long precisions are not supported"
                                  " (i.e. with 15 digits or more). Try removing 'multipleOf' methods from JSON schema."
-                    .format(o['record']))
+                                 .format(o['record']))
                     raise ex
 
             record_to_load = o['record']
@@ -89,28 +86,14 @@ def persist_messages(messages, config, s3_client):
 
             file_is_empty = (not os.path.isfile(filename)) or os.stat(filename).st_size == 0
 
-            flattened_record = utils.flatten_record(record_to_load)
+            start_of_file = '{"data":['
 
-            if o['stream'] not in headers and not file_is_empty:
-                with open(filename, 'r') as csvfile:
-                    reader = csv.reader(csvfile,
-                                        delimiter=delimiter,
-                                        quotechar=quotechar)
-                    first_line = next(reader)
-                    headers[o['stream']] = first_line if first_line else flattened_record.keys()
-            else:
-                headers[o['stream']] = flattened_record.keys()
+            if file_is_empty:
+                with open(filename, "w") as json_file:
+                    json_file.writelines(start_of_file)
 
-            with open(filename, 'a') as csvfile:
-                writer = csv.DictWriter(csvfile,
-                                        headers[o['stream']],
-                                        extrasaction='ignore',
-                                        delimiter=delimiter,
-                                        quotechar=quotechar)
-                if file_is_empty:
-                    writer.writeheader()
-
-                writer.writerow(flattened_record)
+            with open(filename, 'a') as json_file:
+                json_file.write(json.dumps(o) + delimiter)
 
             state = None
         elif message_type == 'STATE':
@@ -129,37 +112,50 @@ def persist_messages(messages, config, s3_client):
             logger.debug('ACTIVATE_VERSION message')
         else:
             logger.warning("Unknown message type {} in message {}"
-                            .format(o['type'], o))
+                           .format(o['type'], o))
 
     # Upload created CSV files to S3
     for filename, target_key in filenames:
-        compressed_file = None
-        if config.get("compression") is None or config["compression"].lower() == "none":
-            pass  # no compression
-        else:
-            if config["compression"] == "gzip":
-                compressed_file = f"{filename}.gz"
-                with open(filename, 'rb') as f_in:
-                    with gzip.open(compressed_file, 'wb') as f_out:
-                        logger.info(f"Compressing file as '{compressed_file}'")
-                        shutil.copyfileobj(f_in, f_out)
-            else:
-                raise NotImplementedError(
-                    "Compression type '{}' is not supported. "
-                    "Expected: 'none' or 'gzip'"
-                    .format(config["compression"])
-                )
-        s3.upload_file(compressed_file or filename,
-                       s3_client,
-                       config.get('s3_bucket'),
-                       target_key,
-                       encryption_type=config.get('encryption_type'),
-                       encryption_key=config.get('encryption_key'))
+        try:
+            with open(filename, "r") as f:
+                text = f.read()
+                text = text[:-1]
+                text += "]}"
+                text = json.loads(text)
 
-        # Remove the local file(s)
-        os.remove(filename)
-        if compressed_file:
-            os.remove(compressed_file)
+            with open(filename, 'w') as f:
+                f.write(json.dumps(text, indent=4))
+
+            compressed_file = None
+            if config.get("compression") is None or config["compression"].lower() == "none":
+                pass  # no compression
+            else:
+                if config["compression"] == "gzip":
+                    compressed_file = f"{filename}.gz"
+                    with open(filename, 'rb') as f_in:
+                        with gzip.open(compressed_file, 'wb') as f_out:
+                            logger.info(f"Compressing file as '{compressed_file}'")
+                            shutil.copyfileobj(f_in, f_out)
+                else:
+                    raise NotImplementedError(
+                        "Compression type '{}' is not supported. "
+                        "Expected: 'none' or 'gzip'"
+                            .format(config["compression"])
+                    )
+            s3.upload_file(compressed_file or filename,
+                           s3_client,
+                           config.get('s3_bucket'),
+                           target_key,
+                           encryption_type=config.get('encryption_type'),
+                           encryption_key=config.get('encryption_key'))
+
+            # Remove the local file(s)
+            os.remove(filename)
+            if compressed_file:
+                os.remove(compressed_file)
+
+        except OSError as e:
+            logger.error(e)
 
     return state
 
