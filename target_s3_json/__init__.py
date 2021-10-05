@@ -16,7 +16,7 @@ from jsonschema import Draft7Validator, FormatChecker
 from target_s3_json import s3
 from target_s3_json import utils
 
-logger = singer.get_logger('target_s3_csv')
+logger = singer.get_logger()
 
 
 def emit_state(state):
@@ -75,7 +75,7 @@ def persist_messages(messages, config, s3_client):
             else:
                 record_to_load = utils.remove_metadata_values_from_record(o)
 
-            filename = o['stream'] + '-' + now + '.csv'
+            filename = o['stream'] + '-' + now + '.json'
             filename = os.path.expanduser(os.path.join(temp_dir, filename))
             target_key = utils.get_target_key(o,
                                               prefix=config.get('s3_key_prefix', ''),
@@ -114,7 +114,7 @@ def persist_messages(messages, config, s3_client):
             logger.warning("Unknown message type {} in message {}"
                            .format(o['type'], o))
 
-    # Upload created CSV files to S3
+    # Upload created JSON files to S3
     for filename, target_key in filenames:
         try:
             with open(filename, "r") as f:

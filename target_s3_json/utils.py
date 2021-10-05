@@ -11,7 +11,7 @@ import inflection
 from decimal import Decimal
 from datetime import datetime
 
-logger = singer.get_logger('target_s3_csv')
+logger = singer.get_logger()
 
 
 def validate_config(config):
@@ -122,7 +122,7 @@ def flatten_record(d, parent_key=[], sep='__'):
 def get_target_key(message, prefix=None, timestamp=None, naming_convention=None):
     """Creates and returns an S3 key for the message"""
     if not naming_convention:
-        naming_convention = '{stream}-{timestamp}.csv' # o['stream'] + '-' + now + '.csv'
+        naming_convention = '{stream}-{timestamp}.json' # o['stream'] + '-' + now + '.json'
     if not timestamp:
         timestamp = datetime.now().strftime('%Y%m%dT%H%M%S')
     key = naming_convention
