@@ -1,12 +1,10 @@
-# pipelinewise-target-s3-json
+# target-s3-json
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pipelinewise-target-s3-csv.svg)](https://pypi.org/project/pipelinewise-target-s3-csv/)
 [![License: Apache2](https://img.shields.io/badge/License-Apache2-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [Singer](https://www.singer.io/) target that uploads loads data to S3 in JSON format
 following the [Singer spec](https://github.com/singer-io/getting-started/blob/master/docs/SPEC.md).
-
-This is a [PipelineWise](https://transferwise.github.io/pipelinewise) compatible target connector.
 
 ## How to use it
 
@@ -22,7 +20,7 @@ It's recommended to use a virtualenv:
 
 ```bash
   python3 -m venv venv
-  pip install pipelinewise-target-s3-json
+  pip install target-s3-json
 ```
 
 or
