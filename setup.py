@@ -5,13 +5,13 @@ from setuptools import setup
 with open('README.md') as f:
     long_description = f.read()
 
-setup(name="pipelinewise-target-s3-csv",
+setup(name="pipelinewise-target-s3-json",
       version="1.5.0",
-      description="Singer.io target for writing CSV files and upload to S3 - PipelineWise compatible",
+      description="Singer.io target for writing JSON files and upload to S3 - PipelineWise compatible",
       long_description=long_description,
       long_description_content_type='text/markdown',
       author="TransferWise",
-      url='https://github.com/transferwise/pipelinewise-target-s3-csv',
+      url='https://github.com/transferwise/pipelinewise-target-s3-json',
       classifiers=[
           'License :: OSI Approved :: Apache Software License',
           'Programming Language :: Python :: 3 :: Only'
@@ -31,7 +31,7 @@ setup(name="pipelinewise-target-s3-csv",
       },
       entry_points="""
           [console_scripts]
-          target-s3-csv=target_s3_json:main
+          target-s3-json=target_s3_json:main
        """,
       packages=["target_s3_json"],
       package_data = {},
