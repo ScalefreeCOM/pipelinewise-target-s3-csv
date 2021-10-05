@@ -16,7 +16,7 @@ setup(name="pipelinewise-target-s3-csv",
           'License :: OSI Approved :: Apache Software License',
           'Programming Language :: Python :: 3 :: Only'
       ],
-      py_modules=["target_s3_csv"],
+      py_modules=["target_s3_json"],
       install_requires=[
           'pipelinewise-singer-python==1.*',
           'inflection==0.5.1',
@@ -31,9 +31,9 @@ setup(name="pipelinewise-target-s3-csv",
       },
       entry_points="""
           [console_scripts]
-          target-s3-csv=target_s3_csv:main
+          target-s3-csv=target_s3_json:main
        """,
-      packages=["target_s3_csv"],
+      packages=["target_s3_json"],
       package_data = {},
       include_package_data=True,
 )

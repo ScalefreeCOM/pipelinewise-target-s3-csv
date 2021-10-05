@@ -3,9 +3,9 @@ import unittest
 import simplejson
 import botocore
 
-import target_s3_csv
+import target_s3_json
 
-from target_s3_csv import s3
+from target_s3_json import s3
 
 
 try:
@@ -45,7 +45,7 @@ class TestIntegration(unittest.TestCase):
         """Load data into S3"""
         if s3_client is None:
             s3_client = self.s3_client
-        target_s3_csv.persist_messages(messages, self.config, s3_client)
+        target_s3_json.persist_messages(messages, self.config, s3_client)
 
     def test_invalid_json(self):
         """Receiving invalid JSONs should raise an exception"""
