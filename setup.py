@@ -6,13 +6,13 @@ with open('README.md') as f:
     long_description = f.read()
 
 setup(name="scalefree-target-s3-json",
-      version="0.1",
+      version="0.2",
       description="Singer.io target for writing JSON files and upload to S3",
       long_description=long_description,
       long_description_content_type='text/markdown',
       author="Scalefree GmbH",
       url='https://github.com/ScalefreeCOM/scalefree-target-s3-json',
-      download_url = 'https://github.com/ScalefreeCOM/scalefree-target-s3-json/archive/refs/tags/v_01.tar.gz',
+      download_url = 'https://github.com/ScalefreeCOM/scalefree-target-s3-json/archive/refs/tags/v_02.tar.gz',
       classifiers=[
           'License :: OSI Approved :: Apache Software License',
           'Programming Language :: Python :: 3 :: Only'
