@@ -19,21 +19,24 @@ installation instructions for [Mac](http://docs.python-guide.org/en/latest/start
 It's recommended to use a virtualenv:
 
 ```bash
-  python3 -m venv venv
+  python3 -m venv env-target-s3-json
   pip install target-s3-json
 ```
 
-or
+Install the package target-s3-json in the virtualenv:
 
 ```bash
-  make venv
+  source env-target-s3-json/bin/activate
+  pip install git+https://github.com/ScalefreeCOM/scalefree-target-s3-json
 ```
 
 ### To run
 
 Like any other target that's following the singer specification:
 
-`some-singer-tap | target-s3-json --config [config.json]`
+```bash
+  some-singer-tap --catalog [catalog.json] | ~/environment/env-target-s3-json/bin/python3 env-target-s3-json/lib/python3.7/site-packages/target_s3_json/__init__.py --config [config.json]
+```
 
 It's reading incoming messages from STDIN and using the properties in `config.json` to upload data into Postgres.
 
@@ -45,70 +48,13 @@ Running the target connector requires a `config.json` file. An example with the 
 
    ```json
    {
-     "s3_bucket": "my_bucket"
+	"aws_access_key_id": "ACCESS-KEY",
+	"aws_secret_access_key": "SECRET",
+	"s3_bucket": "BUCKET",
+	"s3_key_prefix": "SOME-PREFIX/",
+	"delimiter": ","
    }
    ```
-
-### Profile based authentication
-
-Profile based authentication used by default using the `default` profile. To use another profile set `aws_profile` parameter in `config.json` or set the `AWS_PROFILE` environment variable.
-
-### Non-Profile based authentication
-
-For non-profile based authentication set `aws_access_key_id` , `aws_secret_access_key` and optionally the `aws_session_token` parameter in the `config.json`. Alternatively you can define them out of `config.json` by setting `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN` environment variables.
-
-
-Full list of options in `config.json`:
-
-| Property                            | Type    | Required?  | Description                                                   |
-|-------------------------------------|---------|------------|---------------------------------------------------------------|
-| aws_access_key_id                   | String  | No         | S3 Access Key Id. If not provided, `AWS_ACCESS_KEY_ID` environment variable will be used. |
-| aws_secret_access_key               | String  | No         | S3 Secret Access Key. If not provided, `AWS_SECRET_ACCESS_KEY` environment variable will be used. |
-| aws_session_token                   | String  | No         | AWS Session token. If not provided, `AWS_SESSION_TOKEN` environment variable will be used. |
-| aws_endpoint_url                    | String  | No         | AWS endpoint URL. |
-| aws_profile                         | String  | No         | AWS profile name for profile based authentication. If not provided, `AWS_PROFILE` environment variable will be used. |
-| s3_bucket                           | String  | Yes        | S3 Bucket name                                                |
-| s3_key_prefix                       | String  |            | (Default: None) A static prefix before the generated S3 key names. Using prefixes you can 
-| delimiter                           | String  |            | (Default: ',') A one-character string used to separate fields. |
-| quotechar                           | String  |            | (Default: '"') A one-character string used to quote fields containing special characters, such as the delimiter or quotechar, or which contain new-line characters. |
-| add_metadata_columns                | Boolean |            | (Default: False) Metadata columns add extra row level information about data ingestions, (i.e. when was the row read in source, when was inserted or deleted in snowflake etc.) Metadata columns are creating automatically by adding extra columns to the tables with a column prefix `_SDC_`. The column names are following the stitch naming conventions documented at https://www.stitchdata.com/docs/data-structure/integration-schemas#sdc-columns. Enabling metadata columns will flag the deleted rows by setting the `_SDC_DELETED_AT` metadata column. Without the `add_metadata_columns` option the deleted rows from singer taps will not be recongisable in Snowflake. |
-| encryption_type                     | String  | No         | (Default: 'none') The type of encryption to use. Current supported options are: 'none' and 'KMS'. |
-| encryption_key                      | String  | No         | A reference to the encryption key to use for data encryption. For KMS encryption, this should be the name of the KMS encryption key ID (e.g. '1234abcd-1234-1234-1234-1234abcd1234'). This field is ignored if 'encryption_type' is none or blank. |
-| compression                         | String  | No         | The type of compression to apply before uploading. Supported options are `none` (default) and `gzip`. For gzipped files, the file extension will automatically be changed to `.csv.gz` for all files. |
-| naming_convention                   | String  | No         | (Default: None) Custom naming convention of the s3 key. Replaces tokens `date`, `stream`, and `timestamp` with the appropriate values. <br><br>Supports "folders" in s3 keys e.g. `folder/folder2/{stream}/export_date={date}/{timestamp}.csv`. <br><br>Honors the `s3_key_prefix`,  if set, by prepending the "filename". E.g. naming_convention = `folder1/my_file.csv` and s3_key_prefix = `prefix_` results in `folder1/prefix_my_file.csv` |
-| temp_dir                            | String  |            | (Default: platform-dependent) Directory of temporary CSV files with RECORD messages. |
-
-### To run tests:
-
-1. Define environment variables that requires running the tests
-```
-  export TARGET_S3_JSON_ACCESS_KEY_ID=<s3-access-key-id>
-  export TARGET_S3_JSON_SECRET_ACCESS_KEY=<s3-secret-access-key>
-  export TARGET_S3_JSON_BUCKET=<s3-bucket>
-  export TARGET_S3_JSON_KEY_PREFIX=<s3-key-prefix>
-```
-
-2. Install python test dependencies in a virtual env and run unit and integration tests
-```bash
-    make venv
-```
-
-3. To run unit tests:
-```bash
-  make unit_test
-```
-
-4. To run integration tests:
-```bash
-  make integration_test
-```
-
-### To run pylint:
-
-1. Install python dependencies and run python linter
-```bash
-    make venv pylint
-```
 
 ## License
 
