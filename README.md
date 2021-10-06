@@ -38,8 +38,6 @@ Like any other target that's following the singer specification:
   some-singer-tap --catalog [catalog.json] | ~/environment/env-target-s3-json/bin/python3 env-target-s3-json/lib/python3.7/site-packages/target_s3_json/__init__.py --config [config.json]
 ```
 
-It's reading incoming messages from STDIN and using the properties in `config.json` to upload data into Postgres.
-
 **Note**: To avoid version conflicts run `tap` and `targets` in separate virtual environments.
 
 ### Configuration settings
