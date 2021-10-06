@@ -8,8 +8,6 @@ following the [Singer spec](https://github.com/singer-io/getting-started/blob/ma
 
 ## How to use it
 
-If you want to run this [Singer Target](https://singer.io) independently please read further.
-
 ## Install
 
 First, make sure Python 3 is installed on your system or follow these
@@ -28,6 +26,7 @@ Install the package target-s3-json in the virtualenv:
 ```bash
   source env-target-s3-json/bin/activate
   pip install git+https://github.com/ScalefreeCOM/scalefree-target-s3-json
+  deactivate
 ```
 
 ### To run
