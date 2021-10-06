@@ -18,14 +18,20 @@ It's recommended to use a virtualenv:
 
 ```bash
   python3 -m venv env-target-s3-json
-  pip install target-s3-json
 ```
 
 Install the package target-s3-json in the virtualenv:
 
+Either install it from github:
 ```bash
   source env-target-s3-json/bin/activate
   pip install git+https://github.com/ScalefreeCOM/scalefree-target-s3-json
+  deactivate
+```
+or from PyPI:
+```bash
+  source env-target-s3-json/bin/activate
+  pip install scalefree-target-s3-json
   deactivate
 ```
 
