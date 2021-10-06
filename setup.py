@@ -12,6 +12,7 @@ setup(name="scalefree-target-s3-json",
       long_description_content_type='text/markdown',
       author="Scalefree GmbH",
       url='https://github.com/ScalefreeCOM/scalefree-target-s3-json',
+      download_url = 'https://github.com/ScalefreeCOM/scalefree-target-s3-json/archive/refs/tags/v_01.tar.gz',
       classifiers=[
           'License :: OSI Approved :: Apache Software License',
           'Programming Language :: Python :: 3 :: Only'
