@@ -5,13 +5,13 @@ from setuptools import setup
 with open('README.md') as f:
     long_description = f.read()
 
-setup(name="pipelinewise-target-s3-json",
-      version="1.5.0",
-      description="Singer.io target for writing JSON files and upload to S3 - PipelineWise compatible",
+setup(name="scalefree-target-s3-json",
+      version="0.1",
+      description="Singer.io target for writing JSON files and upload to S3",
       long_description=long_description,
       long_description_content_type='text/markdown',
-      author="TransferWise",
-      url='https://github.com/transferwise/pipelinewise-target-s3-json',
+      author="Scalefree GmbH",
+      url='https://github.com/ScalefreeCOM/scalefree-target-s3-json',
       classifiers=[
           'License :: OSI Approved :: Apache Software License',
           'Programming Language :: Python :: 3 :: Only'
@@ -27,6 +27,7 @@ setup(name="pipelinewise-target-s3-json",
               'pylint==2.10.*',
               'pytest==6.2.*',
               'pytest-cov==2.12.*',
+              'nose==1.3.7'
           ]
       },
       entry_points="""
