@@ -1,4 +1,6 @@
-# target-s3-json
+# target-s3-json by [Scalefree International GmbH](https://www.scalefree.com)
+
+<img src="https://user-images.githubusercontent.com/78537603/191483803-8cd4fc72-54a1-45f6-ab39-d798ec83e4c9.jpg" width=50% align=right>
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pipelinewise-target-s3-csv.svg)](https://pypi.org/project/pipelinewise-target-s3-csv/)
 [![License: Apache2](https://img.shields.io/badge/License-Apache2-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
